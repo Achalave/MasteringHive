@@ -1,59 +1,125 @@
-
 package neuralnet;
 
+import java.util.ArrayList;
 import neuralnet.activationFunctions.ActivationFunction;
+import neuralnet.activationFunctions.RangedActivationFunction;
 
 /**
  *
  * @author Michael
  */
-public class Neuron {
-    
-    NeuralNetworkData data;
-    int layerIndex,neuronIndex;
-    
-    
+public class Neuron implements NeuralReceptor {
+
+    ArrayList<NeuralLink> linksOut;
+    ActivationFunction func;
+    float outputValue = 0;
+
     //w1*i1 + w2*i2 + w3*i3 + ... - offset = output
-    public Neuron(NeuralNetworkData d, int layerIndex, int neuronIndex){
-        data = d;
-        this.layerIndex = layerIndex;
-        this.neuronIndex = neuronIndex;
+    public Neuron(ArrayList<NeuralLink> links, ActivationFunction f) {
+        linksOut = links;
+        func = f;
     }
-    
+
+    public Neuron(ArrayList<NeuralLink> links) {
+        linksOut = links;
+    }
+
+    public Neuron(ActivationFunction f) {
+        func = f;
+    }
+
     /**
-     * Takes in a number of inputs and return a single float value based off
-     * the internal weights for this node.
-     * @param inputs The input list.
-     * @return The sum of the product of each weight/input pair plus an offset value.
-     * @throws IncorrectNumberOfInputsException 
-     * Thrown when an incorrect number of inputs is fed to this method.
+     * Pushes the output value through every link associated with this neuron
+     * after running the value through the activation function associated with
+     * this node. The output value is then reset to 0.
+     *
+     * @return The value that was pushed through the network.
      */
-    public float applyInputs(float[] inputs) throws IncorrectNumberOfInputsException{
-        if(inputs.length != data.getExpectedNumInputs(layerIndex, neuronIndex)){
-            throw new IncorrectNumberOfInputsException();
+    public float pushOutput() {
+        //Store the output in a temporary variable and send it through the 
+        //activation function, if instantiated
+        float output;
+        if (func != null) {
+            output = func.function(outputValue);
+        } else {
+            output = outputValue;
         }
-        //Apply the inputs
-        float[] weights = data.getNeuronWeights(layerIndex, neuronIndex);
-        boolean[] lineValidities = data.getNeuronLineValidity(layerIndex, neuronIndex);
-        float output = 0;
-        for(int i=0; i<inputs.length; i++){
-            if(lineValidities[i]){
-                output += inputs[i]*weights[i];
+        outputValue = 0;
+
+        if (linksOut != null) {
+            for (NeuralLink link : linksOut) {
+                link.pushValue(output);
             }
         }
-        
-        //Apply the offset
-        output -= weights[weights.length-1];
-        
-        //Apply the activation function
-        ActivationFunction f = data.getActivationFunction(layerIndex, neuronIndex);
-        if(f!=null){
-            output = f.function(output);
-        }
-        
+
         return output;
     }
-    
-    
-    
+
+    /**
+     * Retrieves the output value after it has been processed by the activation
+     * function, which is then reset back to 0.
+     *
+     * @return The output value of this node
+     */
+    public float retrieveOutput() {
+        //Store the output in a temporary variable and send it through the 
+        //activation function, if instantiated
+        float output;
+        if (func != null) {
+            output = func.function(outputValue);
+        } else {
+            output = outputValue;
+        }
+        outputValue = 0;
+
+        return output;
+    }
+
+    /**
+     * Retrieves the output value after it has been processed by the activation
+     * function without resetting the output variable.
+     *
+     * @return The current output value.
+     */
+    public float sampleOutput() {
+        if (func != null) {
+            return func.function(outputValue);
+        } else {
+            return outputValue;
+        }
+
+    }
+
+    @Override
+    public void incrementOutput(float inc) {
+        outputValue += inc;
+    }
+
+    public void setLinksOut(ArrayList<NeuralLink> linksOut) {
+        this.linksOut = linksOut;
+    }
+
+    public void setFunc(ActivationFunction func) {
+        this.func = func;
+    }
+
+    public ArrayList<NeuralLink> getLinksOut() {
+        return linksOut;
+    }
+
+    public ActivationFunction getFunc() {
+        return func;
+    }
+
+    public void addNeuralLink(NeuralLink link) {
+        linksOut.add(link);
+    }
+
+    public void setOutputRange(float min, float max) throws RangeNotAdjustableException {
+        if (!(func instanceof RangedActivationFunction)) {
+            throw new RangeNotAdjustableException();
+        }
+        ((RangedActivationFunction) func).setRange(min, max);
+    }
+
 }

@@ -8,6 +8,10 @@ package neuralnet.activationFunctions;
 public class ZeroToOneActivationFunction implements ActivationFunction{
     final double response;
     
+    public ZeroToOneActivationFunction(){
+        response = 1;
+    }
+    
     public ZeroToOneActivationFunction(double res){
         response = res;
     }

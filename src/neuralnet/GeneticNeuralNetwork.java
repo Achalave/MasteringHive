@@ -1,23 +1,20 @@
 
-package genetics;
-
-import neuralnet.NeuralNetworkData;
+package neuralnet;
 
 /**
  *
  * @author Michael
  */
-public class NeuralNetworkGeneticWrapper {
+public class GeneticNeuralNetwork extends NeuralNetwork{
     
-    NeuralNetworkData data;
-    float fitness;
-    
-    public NeuralNetworkGeneticWrapper(NeuralNetworkData d){
-        data = d;
+    private float fitness;
+
+    public GeneticNeuralNetwork(int numInputs, int numOutputs, int hiddenLayers) {
+        super(numInputs, numOutputs, hiddenLayers);
     }
-    
-    public NeuralNetworkData getNetworkData(){
-        return data;
+
+    public GeneticNeuralNetwork(NeuralNetworkData d) {
+        super(d);
     }
     
     public void setFitness(float f){
@@ -35,7 +32,4 @@ public class NeuralNetworkGeneticWrapper {
     public float getFitness(){
         return fitness;
     }
-    
-    
-    
 }

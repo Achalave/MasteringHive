@@ -2,7 +2,7 @@
 package genetics;
 
 import java.util.ArrayList;
-import neuralnet.NeuralNetwork;
+import neuralnet.GeneticNeuralNetwork;
 import neuralnet.NeuralNetworkData;
 
 /**
@@ -17,13 +17,16 @@ public class GeneticFactory {
     
     float totalFitness;
     
+    boolean removeLinks;
+    boolean addLinks;
+    
     public GeneticFactory(){
-        //networks = new ArrayList<>();
+        
     }
     
     
-    private void mutateNetworks(ArrayList<NeuralNetworkGeneticWrapper> networks){
-        for(NeuralNetworkGeneticWrapper w:networks){
+    private void mutateNetworks(ArrayList<GeneticNeuralNetwork> networks){
+        for(GeneticNeuralNetwork w:networks){
             NeuralNetworkData data = w.getNetworkData();
             mutateNetwork(data);
         }
@@ -49,7 +52,7 @@ public class GeneticFactory {
         }
     }
     
-    private void crossoverNetworks(ArrayList<NeuralNetworkGeneticWrapper> networks,NeuralNetworkGeneticWrapper n1, NeuralNetworkGeneticWrapper n2){
+    private void crossoverNetworks(ArrayList<GeneticNeuralNetwork> networks,GeneticNeuralNetwork n1, GeneticNeuralNetwork n2){
         float[][][] w1 = n1.getNetworkData().getData();
         float[][][] w2 = n2.getNetworkData().getData();
         
@@ -63,11 +66,11 @@ public class GeneticFactory {
         }
     }
     
-    private NeuralNetworkGeneticWrapper rouletteSelection(ArrayList<NeuralNetworkGeneticWrapper> networks){
+    private GeneticNeuralNetwork rouletteSelection(ArrayList<GeneticNeuralNetwork> networks){
         double slice = Math.random()*totalFitness;
         double fitnessSum = 0;
         
-        for(NeuralNetworkGeneticWrapper w:networks){
+        for(GeneticNeuralNetwork w:networks){
             fitnessSum += w.getFitness();
             if(fitnessSum >= slice){
                 return w;
@@ -76,7 +79,7 @@ public class GeneticFactory {
         return null;
     }
     
-    public void breed(ArrayList<NeuralNetworkGeneticWrapper> networks){
+    public void breed(ArrayList<GeneticNeuralNetwork> networks){
         
     }
 }

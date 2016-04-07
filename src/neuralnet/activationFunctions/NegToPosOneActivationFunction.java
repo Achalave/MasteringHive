@@ -13,6 +13,10 @@ public class NegToPosOneActivationFunction implements ActivationFunction {
 
     final double response;
 
+    public NegToPosOneActivationFunction(){
+        response = 1;
+    }
+    
     public NegToPosOneActivationFunction(double res) {
         response = res;
     }

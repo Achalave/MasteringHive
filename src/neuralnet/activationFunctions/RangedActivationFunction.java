@@ -10,6 +10,11 @@ public final class RangedActivationFunction implements ActivationFunction{
     float stretch;
     float shift;
     
+    public RangedActivationFunction(){
+        response = 1;
+        setRange(0,1);
+    }
+    
     public RangedActivationFunction(float min, float max, float res){
         response = res;
         setRange(min,max);
